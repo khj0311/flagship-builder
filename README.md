@@ -23,7 +23,9 @@ flagship-builder/
 │   ├── styles/                       # 공유 스타일
 │   └── main.js                       # 메인 진입점
 ├── public/                           # 정적 파일
-├── index.html                        # 메인 HTML
+├── index.html                        # 프로젝트 선택 페이지
+├── projectA.html                     # 프로젝트 A 진입 HTML
+├── projectB.html                     # 프로젝트 B 진입 HTML
 ├── vite.config.js                    # Vite 설정
 └── package.json                      # 프로젝트 설정
 ```
@@ -31,6 +33,7 @@ flagship-builder/
 ## 기능
 
 - **다중 프로젝트 지원**: 하나의 코드베이스에서 여러 프로젝트 관리
+- **분리된 빌드 환경**: 각 프로젝트별로 독립적인 개발 및 빌드 환경
 - **컴포넌트 기반 아키텍처**: HTML, SCSS, JS가 한 세트로 구성된 컴포넌트
 - **Vanilla JS**: 외부 프레임워크 없이 순수 자바스크립트 사용
 - **SCSS**: 고급 스타일링을 위한 SCSS 지원
@@ -51,49 +54,87 @@ cd flagship-builder
 npm install
 ```
 
-3. 개발 서버 시작
+## 개발 방법
+
+### 프로젝트 선택기 실행
 
 ```bash
 npm run dev
 ```
 
-## 프로젝트 사용 방법
-
-### 개발 서버 실행
+### 프로젝트 A 개발 서버 실행
 
 ```bash
-npm run dev
+npm run dev:projectA
 ```
 
-이후 브라우저에서 `http://localhost:3000`으로 접속하면 프로젝트 선택 화면이 표시됩니다.
-특정 프로젝트를 직접 실행하려면 URL 파라미터를 사용할 수 있습니다:
+이 명령은 3001 포트에서 프로젝트 A를 실행합니다.
 
-- Project A: `http://localhost:3000/?project=projectA`
-- Project B: `http://localhost:3000/?project=projectB`
+### 프로젝트 B 개발 서버 실행
 
-### 빌드
+```bash
+npm run dev:projectB
+```
 
-프로덕션용 빌드:
+이 명령은 3002 포트에서 프로젝트 B를 실행합니다.
+
+## 빌드 방법
+
+### 모든 프로젝트 빌드
 
 ```bash
 npm run build
 ```
 
-빌드된 결과물은 `dist` 폴더에 생성됩니다.
-
-### 빌드 결과물 미리보기
+### 프로젝트 A만 빌드
 
 ```bash
-npm run preview
+npm run build:projectA
+```
+
+빌드된 결과물은 `dist/projectA` 폴더에 생성됩니다.
+
+### 프로젝트 B만 빌드
+
+```bash
+npm run build:projectB
+```
+
+빌드된 결과물은 `dist/projectB` 폴더에 생성됩니다.
+
+## 빌드 결과물 미리보기
+
+### 프로젝트 A 미리보기
+
+```bash
+npm run preview:projectA
+```
+
+### 프로젝트 B 미리보기
+
+```bash
+npm run preview:projectB
 ```
 
 ## 새 프로젝트 추가하기
 
 1. `src` 폴더에 새 프로젝트 폴더 생성 (예: `projectC`)
 2. 프로젝트 구조 생성 (common, components 등)
-3. 프로젝트 진입점 JS 파일 생성 (예: `projectC.js`)
-4. `src/main.js`에 프로젝트 정보 추가
-5. `vite.config.js`의 manualChunks에 프로젝트 추가
+3. 루트에 새 프로젝트의 HTML 파일 생성 (예: `projectC.html`)
+4. `package.json`에 새 프로젝트 스크립트 추가
+5. `vite.config.js`의 input에 새 프로젝트 추가
+
+예시:
+
+```javascript
+// vite.config.js
+input: {
+  main: resolve(__dirname, 'index.html'),
+  projectA: resolve(__dirname, 'projectA.html'),
+  projectB: resolve(__dirname, 'projectB.html'),
+  projectC: resolve(__dirname, 'projectC.html') // 새 프로젝트 추가
+}
+```
 
 ## 새 컴포넌트 추가하기
 
