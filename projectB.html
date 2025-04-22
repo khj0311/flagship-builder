@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project B</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <!-- JavaScript & SCSS 파일 연결 (Vite가 처리) -->
+  <script type="module" src="/src/projectB/projectB.js"></script>
+</head>
+<body class="projectB">
+  <div id="app">
+    <!-- Header -->
+    <header class="projectB-header">
+      <div class="container">
+        <div class="header-wrapper">
+          <div class="logo">ProjectB</div>
+          <nav class="main-nav">
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="#portfolio">Portfolio</a></li>
+              <li><a href="#team">Team</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </nav>
+          <div class="menu-toggle" id="mobile-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Slider Component -->
+      <section class="slider-section">
+        <div class="container">
+          <div class="slider">
+            <div class="slider-container">
+              <div class="slider-track">
+                <div class="slider-slide">
+                  <img src="/placeholder-slide1.jpg" alt="Slide 1">
+                  <div class="slide-content">
+                    <h2>Welcome to ProjectB</h2>
+                    <p>A modern web application built with vanilla JavaScript</p>
+                    <a href="#learn-more" class="btn">Learn More</a>
+                  </div>
+                </div>
+                <div class="slider-slide">
+                  <img src="/placeholder-slide2.jpg" alt="Slide 2">
+                  <div class="slide-content">
+                    <h2>Powerful Features</h2>
+                    <p>Discover what makes ProjectB special</p>
+                    <a href="#features" class="btn">View Features</a>
+                  </div>
+                </div>
+                <div class="slider-slide">
+                  <img src="/placeholder-slide3.jpg" alt="Slide 3">
+                  <div class="slide-content">
+                    <h2>Get Started Today</h2>
+                    <p>Join our community and start building</p>
+                    <a href="#contact" class="btn">Contact Us</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="slider-controls">
+              <button class="slider-prev" aria-label="Previous slide">&#10094;</button>
+              <div class="slider-dots">
+                <button class="slider-dot active" data-slide="0" aria-label="Go to slide 1"></button>
+                <button class="slider-dot" data-slide="1" aria-label="Go to slide 2"></button>
+                <button class="slider-dot" data-slide="2" aria-label="Go to slide 3"></button>
+              </div>
+              <button class="slider-next" aria-label="Next slide">&#10095;</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cards Section -->
+      <section class="cards-section">
+        <div class="container">
+          <h2 class="section-title">Featured Cards</h2>
+          <div class="card-grid">
+            <!-- Card 1 -->
+            <div class="card">
+              <div class="card-image">
+                <img src="/placeholder-card.jpg" alt="Card Image 1">
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">Card Title 1</h3>
+                <p class="card-text">This is a simple card component that can be used throughout ProjectB. Customize the content as needed.</p>
+                <div class="card-actions">
+                  <button class="card-button primary">Primary Action</button>
+                  <button class="card-button secondary">Secondary</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="card">
+              <div class="card-image">
+                <img src="/placeholder-card.jpg" alt="Card Image 2">
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">Card Title 2</h3>
+                <p class="card-text">This is a simple card component with different content. Each card can be customized independently.</p>
+                <div class="card-actions">
+                  <button class="card-button primary">View Details</button>
+                  <button class="card-button secondary">Cancel</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="card">
+              <div class="card-image">
+                <img src="/placeholder-card.jpg" alt="Card Image 3">
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">Card Title 3</h3>
+                <p class="card-text">Another example of the card component with unique content. The layout remains consistent across all cards.</p>
+                <div class="card-actions">
+                  <button class="card-button primary">Explore</button>
+                  <button class="card-button secondary">Share</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="projectB-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-section about">
+            <h3>About ProjectB</h3>
+            <p>ProjectB is a modern web application built with vanilla JavaScript, SCSS, and HTML.</p>
+          </div>
+          <div class="footer-section links">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="#portfolio">Portfolio</a></li>
+              <li><a href="#team">Team</a></li>
+            </ul>
+          </div>
+          <div class="footer-section contact">
+            <h3>Contact Us</h3>
+            <p>Email: info@projectb.com</p>
+            <p>Phone: +1 (555) 123-4567</p>
+            <div class="social-links">
+              <a href="#" class="social-link">Facebook</a>
+              <a href="#" class="social-link">Twitter</a>
+              <a href="#" class="social-link">Instagram</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 ProjectB. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
