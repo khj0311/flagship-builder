@@ -1,0 +1,25 @@
+/* ProjectB Styles */
+
+// Variables
+$primary-color: #2a9d8f;
+$secondary-color: #f8f9fa;
+$text-color: #2b2d42;
+$font-stack: 'Roboto', 'Arial', sans-serif;
+
+// Global styles for projectB
+body.projectB {
+  font-family: $font-stack;
+  color: $text-color;
+  background-color: $secondary-color;
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  
+  h1, h2, h3 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+}
