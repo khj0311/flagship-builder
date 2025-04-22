@@ -6,25 +6,26 @@ export default defineConfig({
   // Base public path when served in production
   base: './',
   
-  // Build output directory
+  // Multi-page application setup
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
-    // Improve build optimization
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: false, // Set to true in production
-        drop_debugger: true
-      }
-    },
-    // Generate separate chunks for each project
+    // Separate entries for each project
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        projectA: resolve(__dirname, 'projectA.html'),
+        projectB: resolve(__dirname, 'projectB.html')
+      },
       output: {
-        manualChunks: {
-          'vendor': ['path'],
-          'projectA': ['./src/projectA/projectA.js'],
-          'projectB': ['./src/projectB/projectB.js'],
+        manualChunks(id) {
+          // Create separate chunks for each project
+          if (id.includes('projectA')) {
+            return 'projectA';
+          } else if (id.includes('projectB')) {
+            return 'projectB';
+          } else if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         }
       }
     }
@@ -34,8 +35,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        // You can add shared SCSS variables, mixins, etc. here
-        // additionalData: `@import "./src/styles/variables.scss";`
+        // Common SCSS variables or imports if needed
       }
     }
   },
@@ -43,8 +43,7 @@ export default defineConfig({
   // Server options for development
   server: {
     port: 3000,
-    open: true,
-    // Add CORS headers if needed
+    open: false, // Don't automatically open browser
     cors: true
   },
   
@@ -54,8 +53,6 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       '@projectA': resolve(__dirname, 'src/projectA'),
       '@projectB': resolve(__dirname, 'src/projectB'),
-      '@components': resolve(__dirname, 'src/components'),
-      '@styles': resolve(__dirname, 'src/styles')
     }
   }
 });
