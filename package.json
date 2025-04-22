@@ -5,8 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:projectA": "vite --port 3001 --open projectA.html",
+    "dev:projectB": "vite --port 3002 --open projectB.html",
     "build": "vite build",
-    "preview": "vite preview"
+    "build:projectA": "vite build --outDir dist/projectA --emptyOutDir",
+    "build:projectB": "vite build --outDir dist/projectB --emptyOutDir",
+    "preview": "vite preview",
+    "preview:projectA": "vite preview --outDir dist/projectA --port 5001",
+    "preview:projectB": "vite preview --outDir dist/projectB --port 5002"
   },
   "devDependencies": {
     "sass": "^1.72.0",
