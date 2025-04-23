@@ -8,11 +8,31 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sass from 'sass';
 
 // __dirname 설정 (ES module에서는 __dirname이 기본적으로 없음)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
+
+// CSS/JS 최소화 함수
+function minifyCSS(css) {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, '') // 주석 제거
+    .replace(/\s+/g, ' ')            // 여러 공백을 하나로
+    .replace(/\s*({|}|:|;|,)\s*/g, '$1') // 중괄호, 콜론, 세미콜론, 쉼표 주변 공백 제거
+    .trim();
+}
+
+function minifyJS(js) {
+  // 간단한 JS 최소화: 주석 제거, 불필요한 공백/줄바꿈 제거
+  return js
+    .replace(/\/\*[\s\S]*?\*\//g, '')       // 블록 주석 제거
+    .replace(/\/\/[^\n]*\n/g, '\n')         // 라인 주석 제거
+    .replace(/\s+/g, ' ')                   // 연속된 공백을 하나로
+    .replace(/\s*({|}|;|:|,|\(|\))\s*/g, '$1')  // 기호 주변 공백 제거
+    .trim();
+}
 
 /**
  * 디렉토리 내의 모든 파일 목록을 재귀적으로 가져오는 함수
@@ -48,6 +68,21 @@ function getAllFiles(dir, filter) {
 }
 
 /**
+ * SCSS를 CSS로 변환하는 함수
+ * @param {string} scssContent SCSS 내용
+ * @returns {string} 컴파일된 CSS 내용
+ */
+function compileSCSS(scssContent) {
+  try {
+    const result = sass.compileString(scssContent);
+    return result.css;
+  } catch (err) {
+    console.error('Error compiling SCSS:', err);
+    return `/* SCSS 컴파일 오류: ${err.message} */\n${scssContent}`;
+  }
+}
+
+/**
  * 프로젝트 빌드 함수
  * @param {string} projectName - 프로젝트 이름 (예: 'projectA')
  * @param {string} templateType - 템플릿 타입 (예: 'index', 'index-rtl', 'index-pim')
@@ -58,25 +93,43 @@ export async function buildProject(projectName, templateType, outputPath) {
   
   // 프로젝트 경로 설정
   const projectSrcDir = path.join(rootDir, 'src', projectName);
+  const projectCommonDir = path.join(projectSrcDir, 'common');
   const projectComponentsDir = path.join(projectSrcDir, 'components');
   
   // 1. 템플릿 파일 읽기
   const templatePath = path.join(projectSrcDir, 'templates', `${templateType}.html`);
   let templateContent = fs.readFileSync(templatePath, 'utf-8');
   
-  // 2. 컴포넌트 스타일 수집
+  // 2. common 스타일 수집 및 컴포넌트 스타일 수집 (SCSS -> CSS 변환)
+  const commonStyles = collectCommonStyles(projectCommonDir);
   const componentStyles = collectComponentStyles(projectComponentsDir);
+  
+  // 모든 스타일 합치기
+  let combinedCSS = commonStyles.concat(componentStyles).join('\n');
+  
+  // SCSS -> CSS 변환
+  combinedCSS = compileSCSS(combinedCSS);
   
   // 3. 컴포넌트 HTML 수집
   const componentHTMLs = collectComponentHTMLs(projectComponentsDir);
   
-  // 4. 컴포넌트 스크립트 수집
+  // 4. common 스크립트와 컴포넌트 스크립트 수집 (common 먼저, 그 다음 components)
+  const commonScripts = collectCommonScripts(projectCommonDir);
   const componentScripts = collectComponentScripts(projectComponentsDir);
+  
+  // 모든 스크립트 합치기 (common이 먼저, 그 다음 components)
+  let combinedJS = commonScripts.concat(componentScripts).join('\n');
+  
+  // index-pim.html인 경우에만 CSS와 JS를 minify
+  if (templateType === 'index-pim') {
+    combinedCSS = minifyCSS(combinedCSS);
+    combinedJS = minifyJS(combinedJS);
+  }
   
   // 5. 템플릿에 컴포넌트 내용 주입
   templateContent = templateContent.replace(
     /<style id="style-container">[\s\S]*?<\/style>/,
-    `<style id="style-container">\n${componentStyles.join('\n')}\n</style>`
+    `<style id="style-container">\n${combinedCSS}\n</style>`
   );
   
   templateContent = templateContent.replace(
@@ -86,7 +139,7 @@ export async function buildProject(projectName, templateType, outputPath) {
   
   templateContent = templateContent.replace(
     /<script id="script-container">[\s\S]*?<\/script>/,
-    `<script id="script-container">\n${componentScripts.join('\n')}\n</script>`
+    `<script id="script-container">\n${combinedJS}\n</script>`
   );
   
   // 6. 최종 HTML 파일 저장
@@ -168,16 +221,43 @@ export function copyMediaFiles(projectName, outputPath) {
 }
 
 /**
+ * common 폴더의 스타일 수집
+ * @param {string} commonDir - common 디렉토리
+ * @returns {string[]} 스타일 컨텐츠 배열
+ */
+function collectCommonStyles(commonDir) {
+  if (!fs.existsSync(commonDir)) {
+    return [];
+  }
+  
+  const commonStylesDir = path.join(commonDir, 'styles');
+  if (!fs.existsSync(commonStylesDir)) {
+    return [];
+  }
+  
+  const styleFiles = getAllFiles(commonStylesDir, /\.scss$/);
+  
+  return styleFiles.map(file => {
+    const style = fs.readFileSync(file, 'utf-8');
+    return `/* ${path.relative(commonDir, file)} */\n${style}`;
+  });
+}
+
+/**
  * 컴포넌트 스타일 수집
  * @param {string} componentsDir - 컴포넌트 디렉토리
  * @returns {string[]} 스타일 컨텐츠 배열
  */
 function collectComponentStyles(componentsDir) {
+  if (!fs.existsSync(componentsDir)) {
+    return [];
+  }
+  
   const styleFiles = getAllFiles(componentsDir, /\.scss$/);
   
   return styleFiles.map(file => {
     const style = fs.readFileSync(file, 'utf-8');
-    return `/* ${path.basename(file)} */\n${style}`;
+    return `/* ${path.relative(componentsDir, file)} */\n${style}`;
   });
 }
 
@@ -187,11 +267,38 @@ function collectComponentStyles(componentsDir) {
  * @returns {string[]} HTML 컨텐츠 배열
  */
 function collectComponentHTMLs(componentsDir) {
+  if (!fs.existsSync(componentsDir)) {
+    return [];
+  }
+  
   const htmlFiles = getAllFiles(componentsDir, /\.html$/);
   
   return htmlFiles.map(file => {
     const html = fs.readFileSync(file, 'utf-8');
-    return `<!-- ${path.basename(file)} -->\n${html}`;
+    return `<!-- ${path.relative(componentsDir, file)} -->\n${html}`;
+  });
+}
+
+/**
+ * common 폴더의 스크립트 수집
+ * @param {string} commonDir - common 디렉토리
+ * @returns {string[]} 스크립트 컨텐츠 배열
+ */
+function collectCommonScripts(commonDir) {
+  if (!fs.existsSync(commonDir)) {
+    return [];
+  }
+  
+  const commonScriptsDir = path.join(commonDir, 'scripts');
+  if (!fs.existsSync(commonScriptsDir)) {
+    return [];
+  }
+  
+  const scriptFiles = getAllFiles(commonScriptsDir, /\.js$/);
+  
+  return scriptFiles.map(file => {
+    const script = fs.readFileSync(file, 'utf-8');
+    return `// ${path.relative(commonDir, file)}\n${script}`;
   });
 }
 
@@ -201,11 +308,15 @@ function collectComponentHTMLs(componentsDir) {
  * @returns {string[]} 스크립트 컨텐츠 배열
  */
 function collectComponentScripts(componentsDir) {
+  if (!fs.existsSync(componentsDir)) {
+    return [];
+  }
+  
   const scriptFiles = getAllFiles(componentsDir, /\.js$/);
   
   return scriptFiles.map(file => {
     const script = fs.readFileSync(file, 'utf-8');
-    return `// ${path.basename(file)}\n${script}`;
+    return `// ${path.relative(componentsDir, file)}\n${script}`;
   });
 }
 
@@ -229,28 +340,42 @@ export async function buildProjectAll(projectName, outputPath = null) {
     console.warn(`Warning: Could not build index-rtl.html for ${projectName}: ${err.message}`);
   }
   
-  // index-pim.html 생성 (index.html에서 필요한 부분 추출)
+  // index-pim.html 빌드
   try {
-    const indexContent = fs.readFileSync(path.join(finalOutputPath, 'index.html'), 'utf-8');
-    
-    const styleRegex = /<style id="style-container">([\s\S]*?)<\/style>/;
-    const contentRegex = /<div id="contents">([\s\S]*?)<\/div>/;
-    const scriptRegex = /<script id="script-container">([\s\S]*?)<\/script>/;
-    
-    const styleMatch = indexContent.match(styleRegex);
-    const contentMatch = indexContent.match(contentRegex);
-    const scriptMatch = indexContent.match(scriptRegex);
-    
-    const pimHTML = `
-${styleMatch ? styleMatch[0] : ''}
-${contentMatch ? contentMatch[0] : ''}
-${scriptMatch ? scriptMatch[0] : ''}
-`;
-    
-    fs.writeFileSync(path.join(finalOutputPath, 'index-pim.html'), pimHTML.trim());
-    console.log(`Generated index-pim.html for ${projectName}`);
+    await buildProject(projectName, 'index-pim', finalOutputPath);
   } catch (err) {
-    console.error(`Error generating index-pim.html for ${projectName}:`, err);
+    // index-pim.html 템플릿이 없는 경우, index.html에서 내용 추출
+    console.warn(`Warning: Could not find index-pim.html template, generating from index.html...`);
+    
+    try {
+      const indexContent = fs.readFileSync(path.join(finalOutputPath, 'index.html'), 'utf-8');
+      
+      const styleRegex = /<style id="style-container">([\s\S]*?)<\/style>/;
+      const contentRegex = /<div id="contents">([\s\S]*?)<\/div>/;
+      const scriptRegex = /<script id="script-container">([\s\S]*?)<\/script>/;
+      
+      const styleMatch = indexContent.match(styleRegex);
+      const contentMatch = indexContent.match(contentRegex);
+      const scriptMatch = indexContent.match(scriptRegex);
+      
+      // CSS와 JS 최소화 적용
+      let styleContent = styleMatch ? styleMatch[1] : '';
+      let scriptContent = scriptMatch ? scriptMatch[1] : '';
+      
+      styleContent = minifyCSS(styleContent);
+      scriptContent = minifyJS(scriptContent);
+      
+      const pimHTML = `
+<style id="style-container">${styleContent}</style>
+${contentMatch ? contentMatch[0] : ''}
+<script id="script-container">${scriptContent}</script>
+      `.trim();
+      
+      fs.writeFileSync(path.join(finalOutputPath, 'index-pim.html'), pimHTML);
+      console.log(`Generated index-pim.html for ${projectName} with minified CSS/JS`);
+    } catch (e) {
+      console.error(`Error generating index-pim.html for ${projectName}:`, e);
+    }
   }
   
   // 미디어 파일 복사
