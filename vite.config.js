@@ -16,8 +16,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        projectA: resolve(__dirname, 'projectA.html'),
-        projectB: resolve(__dirname, 'projectB.html')
+        projectA: resolve(__dirname, 'projectA.html')
       },
       output: {
         // Generate clean file names without hashes for production
@@ -29,8 +28,6 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('projectA')) {
             return 'projectA';
-          } else if (id.includes('projectB')) {
-            return 'projectB';
           } else if (id.includes('node_modules')) {
             return 'vendor';
           }
@@ -68,7 +65,6 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, 'src'),
       '@projectA': resolve(__dirname, 'src/projectA'),
-      '@projectB': resolve(__dirname, 'src/projectB'),
       '@buildUtils': resolve(__dirname, 'build-utils')
     }
   },
