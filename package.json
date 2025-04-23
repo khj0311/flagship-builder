@@ -5,17 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:projectA": "vite --port 3001 --open projectA.html",
-    "dev:projectB": "vite --port 3002 --open projectB.html",
+    "dev:projectA": "vite serve src/projectA/templates/index.html --port 3001",
+    "dev:projectB": "vite serve src/projectB/templates/index.html --port 3002",
     "build": "npm run build:projectA && npm run build:projectB",
-    "build:projectA": "vite build --outDir dist/projectA --emptyOutDir && node build-utils/project-builder.js projectA index dist/projectA && node build-utils/project-builder.js projectA index-rtl dist/projectA && node build-utils/project-builder.js projectA index-pim dist/projectA",
-    "build:projectB": "vite build --outDir dist/projectB --emptyOutDir && node build-utils/project-builder.js projectB index dist/projectB && node build-utils/project-builder.js projectB index-rtl dist/projectB && node build-utils/project-builder.js projectB index-pim dist/projectB",
+    "build:projectA": "node --experimental-modules build-utils/project-builder.js projectA",
+    "build:projectB": "node --experimental-modules build-utils/project-builder.js projectB",
     "preview": "vite preview",
     "preview:projectA": "vite preview --outDir dist/projectA --port 5001",
     "preview:projectB": "vite preview --outDir dist/projectB --port 5002"
   },
   "devDependencies": {
-    "glob": "^10.3.10",
     "sass": "^1.72.0",
     "vite": "^5.2.8"
   }
