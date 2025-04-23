@@ -26,15 +26,13 @@ flagship-builder/
 │   │   │   ├── index.html         # 기본 HTML 템플릿
 │   │   │   └── index-rtl.html     # RTL 용 HTML 템플릿
 │   │   └── projectA.js             # 프로젝트 A 진입점
-│   ├── projectB/                     # 프로젝트 B (동일한 구조)
 │   └── styles/                       # 공유 스타일
 ├── dist/                             # 빌드 결과물
-│   ├── projectA/                     # 프로젝트 A 빌드 결과물
-│   │   ├── images/                 # 이미지 및 비디오 파일
-│   │   ├── index.html             # 기본 HTML
-│   │   ├── index-rtl.html         # RTL HTML
-│   │   └── index-pim.html         # PIM HTML (최소 버전)
-│   └── projectB/                     # 프로젝트 B 빌드 결과물
+│   └── projectA/                     # 프로젝트 A 빌드 결과물
+│       ├── images/                 # 이미지 및 비디오 파일
+│       ├── index.html             # 기본 HTML
+│       ├── index-rtl.html         # RTL HTML
+│       └── index-pim.html         # PIM HTML (최소 버전)
 ├── vite.config.js                    # Vite 설정
 └── package.json                      # 프로젝트 설정
 ```
@@ -75,14 +73,6 @@ npm run dev:projectA
 
 이 명령은 3001 포트에서 프로젝트 A를 실행합니다.
 
-### 프로젝트 B 개발 서버 실행
-
-```bash
-npm run dev:projectB
-```
-
-이 명령은 3002 포트에서 프로젝트 B를 실행합니다.
-
 ## 빌드 방법
 
 ### 모든 프로젝트 빌드
@@ -102,14 +92,6 @@ npm run build:projectA
 - `index-rtl.html`: RTL(Right-to-Left) 버전
 - `index-pim.html`: PIM(Product Information Management) 버전 - 순수 컨텐츠만 포함
 - `images/`: 이미지 및 비디오 파일
-
-### 프로젝트 B만 빌드
-
-```bash
-npm run build:projectB
-```
-
-빌드된 결과물은 `dist/projectB` 폴더에 생성됩니다.
 
 ## HTML 템플릿 구조
 
@@ -134,7 +116,7 @@ npm run build:projectB
 1. 각 컴포넌트의 SCSS 파일이 컴파일되어 하나의 스타일 시트로 통합
 2. 각 컴포넌트의 HTML 파일이 순서대로 하나의 컨텐츠로 통합
 3. 각 컴포넌트의 JS 파일이 하나의 스크립트로 통합
-4. 프로젝트의 이미지와 비디오 파일이 dist/[프로젝트명]/images 폴더로 복사됨
+4. 프로젝트의 이미지와 비디오 파일이 dist/projectA/images 폴더로 복사됨
 5. 프로젝트별로 세 가지 유형의 HTML 템플릿에 위 내용이 삽입됨
 
 ## 새 프로젝트 추가하기
