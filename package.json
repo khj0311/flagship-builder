@@ -6,13 +6,10 @@
   "scripts": {
     "dev": "vite",
     "dev:projectA": "vite serve src/projectA/templates/index.html --port 3001",
-    "dev:projectB": "vite serve src/projectB/templates/index.html --port 3002",
-    "build": "npm run build:projectA && npm run build:projectB",
+    "build": "npm run build:projectA",
     "build:projectA": "node --experimental-modules build-utils/project-builder.js projectA",
-    "build:projectB": "node --experimental-modules build-utils/project-builder.js projectB",
     "preview": "vite preview",
-    "preview:projectA": "vite preview --outDir dist/projectA --port 5001",
-    "preview:projectB": "vite preview --outDir dist/projectB --port 5002"
+    "preview:projectA": "vite preview --outDir dist/projectA --port 5001"
   },
   "devDependencies": {
     "sass": "^1.72.0",
