@@ -3,7 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "var": {},
   "scripts": {
+    "create-project": "node build-utils/project-creator.js",
+    "clean-project": "node build-utils/project-creator.js -clean",
     "dev": "vite",
     "dev:projectA": "vite serve src/projectA/templates/index.html --port 3001",
     "build": "npm run build:projectA",

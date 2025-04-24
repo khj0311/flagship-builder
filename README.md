@@ -9,7 +9,7 @@ flagship-builder/
 ├── build-utils/                     # 빌드 유틸리티
 │   └── project-builder.js          # 컴포넌트 통합 빌드 스크립트
 ├── src/
-│   ├── projectA/                     # 프로젝트 A
+│   ├── project/                     # 프로젝트 폴더
 │   │   ├── common/                  # 공통 파일
 │   │   │   ├── styles/             # 스타일 파일
 │   │   │   ├── scripts/            # 유틸리티 스크립트
@@ -25,10 +25,10 @@ flagship-builder/
 │   │   ├── templates/              # HTML 템플릿
 │   │   │   ├── index.html         # 기본 HTML 템플릿
 │   │   │   └── index-rtl.html     # RTL 용 HTML 템플릿
-│   │   └── projectA.js             # 프로젝트 A 진입점
+│   │   └── project.js             # 프로젝트 A 진입점
 │   └── styles/                       # 공유 스타일
 ├── dist/                             # 빌드 결과물
-│   └── projectA/                     # 프로젝트 A 빌드 결과물
+│   └── project/                     # 프로젝트 A 빌드 결과물
 │       ├── images/                 # 이미지 및 비디오 파일
 │       ├── index.html             # 기본 HTML
 │       ├── index-rtl.html         # RTL HTML
@@ -88,6 +88,7 @@ npm run build:projectA
 ```
 
 빌드된 결과물은 `dist/projectA` 폴더에 생성되며, 다음과 같은 파일이 포함됩니다:
+
 - `index.html`: 기본 HTML 버전
 - `index-rtl.html`: RTL(Right-to-Left) 버전
 - `index-pim.html`: PIM(Product Information Management) 버전 - 순수 컨텐츠만 포함
@@ -98,11 +99,13 @@ npm run build:projectA
 각 프로젝트에는 세 가지 유형의 HTML 템플릿이 있습니다:
 
 1. **index.html**: 기본 HTML 구조를 가진 템플릿
+
    - `<style id="style-container">`: 모든 컴포넌트의 SCSS가 통합됨
    - `<div id="contents">`: 모든 컴포넌트의 HTML이 순서대로 통합됨
    - `<script id="script-container">`: 모든 컴포넌트의 JS가 통합됨
 
 2. **index-rtl.html**: RTL 언어를 지원하는 템플릿 (아랍어, 히브리어 등)
+
    - 기본 구조는 index.html과 동일하나 dir="rtl" 속성과 RTL 스타일이 적용됨
 
 3. **index-pim.html**: 순수 컨텐츠만 포함된 최소 버전
